@@ -1,23 +1,7 @@
 from llm_interaction import generate_scenario, generate_outcome
 from user import UserProfile
 from utils import parse_scenario
-
-def update_attributes(user_profile: UserProfile, choice: str):
-    """
-    Updates the user's attributes based on their choice.
-
-    Args:
-        user_profile: The UserProfile object.
-        choice: The choice made by the user (e.g., "A", "B", "C").
-    """
-
-    # Implement your logic here for how choices affect attributes
-    # This is a placeholder; you'll need to refine this based on your game's rules
-    # if choice == "A":
-    #     user_profile.update_attributes(health=1, happiness=1)
-    # elif choice == "B":
-    #     user_profile.update_attributes(intelligence=2)
-    # ...and so on
+from audio_mechanics import speak_text_in_memory
 
 def main():
     """
@@ -37,28 +21,16 @@ def main():
         print("----------------------\n")
 
         scenario_text = generate_scenario(user)
-        # print("DEBUG => scenario_text: ", scenario_text)
         if scenario_text is None:
             break
-
-        # scenario_description, choices = parse_scenario(scenario_text)
-        # print("DEBUG => scenario_description: ", scenario_description)
-        # print("DEBUG => choices:", choices) 
-        # if scenario_description is None or choices is None:
-        #     print("Failed to parse scenario. Exiting.")
-        #     break
         
         scenario_description, choices, hidden_changes = parse_scenario(scenario_text)
-        # print("DEBUG => scenario_description: ", scenario_description)
-        # print("DEBUG => choices: ", choices)
-        # print("DEBUG => hidden_changes: ", hidden_changes)
         if scenario_description is None or choices is None or hidden_changes is None:
             print("Failed to parse scenario. Exiting.")
             break
 
         print("\n" + scenario_description + '\n')
-        # for choice_str in choices:
-        #     print(choice_str)
+        speak_text_in_memory(scenario_description)
         for letter, desc in choices:
             print(f"{letter}) {desc}")
 
@@ -80,19 +52,8 @@ def main():
             if outcome_text is not None:
                 print("Outcome: ")
                 print(outcome_text + "\n")
+                speak_text_in_memory(outcome_text)
 
-                # choice_description = ""
-                # for choice_letter, desc in choices:
-                #     if choice_letter == user_choice:
-                #         choice_description = desc
-                #         break
-                
-                # update_attributes(user, choice_description, outcome_text)
-        # else:
-        #     print("Error generating outcome")
-        #     break
-
-        # update_attributes(user, user_choice)
         user.add_decision(user.age, user_choice)
         user.age += 1
 
